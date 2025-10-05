@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package io.jenkins.plugins.bitbucket.webhook.moveworkforward.v1;
+package io.jenkins.plugins.bitbucket.webhook.moveworkforward.v2;
 
 import com.cloudbees.jenkins.plugins.bitbucket.api.endpoint.EndpointType;
 import com.cloudbees.jenkins.plugins.bitbucket.api.webhook.BitbucketWebhookConfiguration;
@@ -50,9 +50,7 @@ import org.kohsuke.stapler.interceptor.RequirePOST;
 
 import static hudson.Util.fixEmptyAndTrim;
 
-// https://help.moveworkforward.com/BPW/atlassian-bitbucket-post-webhook-api
-// https://help.moveworkforward.com/BPW/how-to-get-configurations-using-post-webhooks-for-
-public class PostWebhooksConfiguration implements BitbucketWebhookConfiguration {
+public class PostWebhooks2Configuration implements BitbucketWebhookConfiguration {
 
     /**
      * {@code true} if and only if Jenkins is supposed to auto-manage hooks for
@@ -77,7 +75,7 @@ public class PostWebhooksConfiguration implements BitbucketWebhookConfiguration 
     private String endpointJenkinsRootURL;
 
     @DataBoundConstructor
-    public PostWebhooksConfiguration(boolean manageHooks, @CheckForNull String credentialsId) {
+    public PostWebhooks2Configuration(boolean manageHooks, @CheckForNull String credentialsId) {
         this.manageHooks = manageHooks && StringUtils.isNotBlank(credentialsId);
         this.credentialsId = manageHooks ? fixEmptyAndTrim(credentialsId) : null;
     }
@@ -123,21 +121,21 @@ public class PostWebhooksConfiguration implements BitbucketWebhookConfiguration 
     @NonNull
     @Override
     public String getId() {
-        return "POST_WEBHOOKS";
+        return "POST_WEBHOOKS_2";
     }
 
     @Override
     public Class<? extends BitbucketWebhookManager> getManager() {
-        return PostWebhooksManager.class;
+        return PostWebhooks2Manager.class;
     }
 
-    @Symbol("postWebhooks")
+    @Symbol("postWebhooks2")
     @Extension
     public static class DescriptorImpl extends BitbucketWebhookDescriptor {
 
         @Override
         public String getDisplayName() {
-            return Messages.PostWebhooksConfiguration_displayName();
+            return Messages.PostWebhooks2Configuration_displayName();
         }
 
         @Override

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package io.jenkins.plugins.bitbucket.webhook.moveworkforward.v1.trait;
+package io.jenkins.plugins.bitbucket.webhook.moveworkforward.v2.trait;
 
 import com.cloudbees.jenkins.plugins.bitbucket.BitbucketGitSCMBuilder;
 import com.cloudbees.jenkins.plugins.bitbucket.BitbucketSCMSource;
@@ -46,18 +46,12 @@ import org.kohsuke.stapler.DataBoundConstructor;
  *
  * @since 1.0.0
  */
-public class PostWebhooksConfigurationTrait extends SCMSourceTrait {
+public class PostWebhooks2ConfigurationTrait extends SCMSourceTrait {
 
-    /**
-     * The committers that should be ignored in the webhook. A comma separated string.
-     */
-    private final String committersToIgnore;
-
-    /**
-     * Comma separated list of branch masks to ignore notifications from.
-     */
-    private final String branchesToIgnore;
-
+    private String ignoredUsers;
+    private String ignoredGroups;
+    private boolean ignoreCerts;
+    private boolean ignoreURLValidation;
     /**
      * Do not post webhooks if the title or description of a PR, or the last commit message contain "[ci skip]" or "[skip ci]".
      */
@@ -66,23 +60,39 @@ public class PostWebhooksConfigurationTrait extends SCMSourceTrait {
     /**
      * Constructor.
      *
-     * @param committersToIgnore a string of comma separated Bitbucket usernames to ignore
-     * @param branchesToIgnore a string of comma separated branches name to ignore
+     * @param ignoredUsers a string of comma separated Bitbucket usernames to ignore
+     * @param ignoredGroups a string of comma separated Bitbucket groups to ignore
+     * @param ignoreCerts accept self-signed certificates
+     * @param ignoreURLValidation skip callback URL validation
      * @param skipCI commits that contains specific messages
      */
     @DataBoundConstructor
-    public PostWebhooksConfigurationTrait(@NonNull String committersToIgnore, @NonNull String branchesToIgnore, boolean skipCI) {
-        this.committersToIgnore = Util.fixEmptyAndTrim(committersToIgnore);
-        this.branchesToIgnore = Util.fixEmptyAndTrim(branchesToIgnore);
+    public PostWebhooks2ConfigurationTrait(@NonNull String ignoredUsers,
+                                           @NonNull String ignoredGroups,
+                                           boolean ignoreCerts,
+                                           boolean ignoreURLValidation,
+                                           boolean skipCI) {
+        this.ignoredUsers = Util.fixEmptyAndTrim(ignoredUsers);
+        this.ignoredGroups = Util.fixEmptyAndTrim(ignoredGroups);
+        this.ignoreCerts = ignoreCerts;
+        this.ignoreURLValidation = ignoreURLValidation;
         this.skipCI = skipCI;
     }
 
-    public String getCommittersToIgnore() {
-        return this.committersToIgnore;
+    public String getIgnoredUsers() {
+        return ignoredUsers;
     }
 
-    public String getBranchesToIgnore() {
-        return this.branchesToIgnore;
+    public String getIgnoredGroups() {
+        return ignoredGroups;
+    }
+
+    public boolean isIgnoreCerts() {
+        return ignoreCerts;
+    }
+
+    public boolean isIgnoreURLValidation() {
+        return ignoreURLValidation;
     }
 
     public boolean isSkipCI() {
@@ -92,7 +102,7 @@ public class PostWebhooksConfigurationTrait extends SCMSourceTrait {
     /**
      * Our constructor.
      */
-    @Symbol("postWebhookConfiguration")
+    @Symbol("postWebhook2Configuration")
     @Extension
     public static class DescriptorImpl extends SCMSourceTraitDescriptor {
 
@@ -101,7 +111,7 @@ public class PostWebhooksConfigurationTrait extends SCMSourceTrait {
          */
         @Override
         public String getDisplayName() {
-            return Messages.PostWebhooksConfigurationTrait_displayName();
+            return Messages.PostWebhooks2ConfigurationTrait_displayName();
         }
 
         /**
