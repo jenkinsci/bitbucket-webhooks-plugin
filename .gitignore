@@ -21,3 +21,4 @@ work/
 META-INF/
 /.apt_generated/
 /.apt_generated_tests/
+/.asciidoctorconfig.adoc
