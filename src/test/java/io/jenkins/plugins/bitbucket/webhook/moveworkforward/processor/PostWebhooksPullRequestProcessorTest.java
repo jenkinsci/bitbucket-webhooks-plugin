@@ -28,8 +28,6 @@ import com.cloudbees.jenkins.plugins.bitbucket.BitbucketSCMSource;
 import com.cloudbees.jenkins.plugins.bitbucket.api.endpoint.BitbucketEndpoint;
 import com.cloudbees.jenkins.plugins.bitbucket.hooks.HookEventType;
 import com.cloudbees.jenkins.plugins.bitbucket.trait.OriginPullRequestDiscoveryTrait;
-import io.jenkins.plugins.bitbucket.webhook.moveworkforward.processor.PostWebhooksPREvent;
-import io.jenkins.plugins.bitbucket.webhook.moveworkforward.processor.PostWebhooksPullRequestProcessor;
 import io.jenkins.plugins.bitbucket.webhook.moveworkforward.util.HookProcessorTestUtil;
 import java.io.IOException;
 import java.io.InputStream;
