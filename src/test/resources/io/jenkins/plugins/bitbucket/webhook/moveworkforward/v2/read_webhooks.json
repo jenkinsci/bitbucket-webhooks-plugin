@@ -1,0 +1,53 @@
+[
+    {
+        "id": 5,
+        "enabled": true,
+        "lastModified": 1697776537844,
+        "name": "Repository1 configuration 1",
+        "destinations": [
+            {
+                "useUrl": true,
+                "url": "http://example.com/webhook"
+            }
+        ],
+        "sources": [
+            {
+                "projectKey": "EVENT_1",
+                "repositorySlug": "eve_1"
+            }
+        ],
+        "ignoredSources": [
+            {
+                "projectKey": "EVENT_1",
+                "repositorySlug": "eve_1",
+                "branchName": "tttt"
+            }
+        ],
+        "users": [
+            "user1"
+        ],
+        "ignoredUsers": [
+            "user2"
+        ],
+        "groups": [],
+        "ignoredGroups": [],
+        "projectKey": "EVENT_1",
+        "repositorySlug": "eve_1",
+        "eventTypes": [
+            "BUILD_STATUS_SET",
+            "BRANCH_CREATED"
+        ],
+        "ignoreCerts": false,
+        "ignoreURLValidation": false,
+        "override": true,
+        "skipCI": false,
+        "payloadType": "Jenkins",
+        "skipPersonalProjects": false,
+        "httpMethod": "POST",
+        "enableAuthentication": false,
+        "authenticationType": "BASIC",
+        "mutualAuthenticationEnabled": false,
+        "filePathPatterns": [],
+        "level": "REPOSITORY"
+    }
+]

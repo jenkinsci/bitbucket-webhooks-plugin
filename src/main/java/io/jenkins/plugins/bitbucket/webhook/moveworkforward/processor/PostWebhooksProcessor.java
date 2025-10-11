@@ -26,64 +26,27 @@ package io.jenkins.plugins.bitbucket.webhook.moveworkforward.processor;
 import com.cloudbees.jenkins.plugins.bitbucket.BitbucketSCMSource;
 import com.cloudbees.jenkins.plugins.bitbucket.api.BitbucketPushEvent;
 import com.cloudbees.jenkins.plugins.bitbucket.api.endpoint.BitbucketEndpoint;
-import com.cloudbees.jenkins.plugins.bitbucket.api.webhook.BitbucketWebhookProcessor;
-import com.cloudbees.jenkins.plugins.bitbucket.api.webhook.BitbucketWebhookProcessorException;
-import com.cloudbees.jenkins.plugins.bitbucket.hooks.HookEventType;
-import com.cloudbees.jenkins.plugins.bitbucket.server.client.BitbucketServerWebhookPayload;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jenkins.scm.api.SCMEvent;
-import org.apache.commons.collections4.MultiValuedMap;
-import org.apache.commons.lang3.StringUtils;
 
 @Extension
-public class PostWebhooksProcessor implements BitbucketWebhookProcessor {
+public class PostWebhooksProcessor extends AbstractPostWebhookProcessor {
 
     private static final Logger logger = Logger.getLogger(PostWebhooksProcessor.class.getName());
-    private static final List<String> supportedEvents = List.of(
-            HookEventType.PUSH.getKey());
-
-    protected static final String EVENT_TYPE_HEADER = "X-Event-Key";
-    protected static final String SERVER_URL_PARAMETER = "server_url";
-
-    @NonNull
-    @Override
-    public String getServerURL(@NonNull Map<String, String> headers, @NonNull MultiValuedMap<String, String> parameters) {
-        String serverURL = parameters.get(SERVER_URL_PARAMETER).stream()
-                .findFirst()
-                .orElse(null);
-        if (StringUtils.isBlank(serverURL)) {
-            throw new BitbucketWebhookProcessorException(HttpServletResponse.SC_BAD_REQUEST, SERVER_URL_PARAMETER + " query parameter not found or empty. Refer to the user documentation on how configure the webHook in Bitbucket at https://github.com/jenkinsci/bitbucket-branch-source-plugin/blob/master/docs/USER_GUIDE.adoc#webhooks-registering");
-        }
-        return serverURL;
-    }
-
-    @NonNull
-    @Override
-    public String getEventType(@NonNull Map<String, String> headers, @NonNull MultiValuedMap<String, String> parameters) {
-        String eventType = headers.get(EVENT_TYPE_HEADER);
-        if (StringUtils.isEmpty(eventType)) {
-            throw new IllegalStateException(EVENT_TYPE_HEADER + " is missing or empty, this processor should not proceed after canHandle method. Please fill an issue at https://issues.jenkins.io reporting this stacktrace.");
-        }
-        return eventType;
-    }
 
     @Override
-    public boolean canHandle(Map<String, String> headers, MultiValuedMap<String, String> parameters) {
-        return headers.containsKey(EVENT_TYPE_HEADER)
-                && headers.containsKey("X-Bitbucket-Type")
-                && supportedEvents.contains(headers.get(EVENT_TYPE_HEADER))
-                && parameters.containsKey(SERVER_URL_PARAMETER);
+    protected List<PostWebhooksEventType> getSupportedEvents() {
+        return List.of(PostWebhooksEventType.ABSTRACT_REPOSITORY_REFS_CHANGED);
     }
 
     @Override
     public void process(@NonNull String eventType, @NonNull String payload, @NonNull Map<String, Object> context, @NonNull BitbucketEndpoint endpoint) {
-        BitbucketPushEvent push = BitbucketServerWebhookPayload.pushEventFromPayload(payload);
+        BitbucketPushEvent push = WebhookPayload.pushEventFromPayload(payload);
         if (push != null) {
             if (push.getChanges().isEmpty()) {
                 final String owner = push.getRepository().getOwnerName();
@@ -105,12 +68,4 @@ public class PostWebhooksProcessor implements BitbucketWebhookProcessor {
         }
     }
 
-    @Override
-    public void verifyPayload(Map<String, String> headers, String body, BitbucketEndpoint endpoint) {
-        // not supported
-    }
-
-    private String getOrigin(Map<String, Object> context) {
-        return StringUtils.firstNonBlank((String) context.get("origin"), "unknow");
-    }
 }

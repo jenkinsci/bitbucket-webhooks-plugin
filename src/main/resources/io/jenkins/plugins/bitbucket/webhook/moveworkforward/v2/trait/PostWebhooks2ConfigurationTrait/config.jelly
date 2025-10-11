@@ -1,18 +1,21 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+    <f:entry title="${%Prevents webhook from branches}" field="ignoredSources">
+        <f:textbox/>
+    </f:entry>
     <f:entry title="${%Prevents webhook from users}" field="ignoredUsers">
         <f:textbox/>
     </f:entry>
     <f:entry title="${%Prevents webhook from groups}" field="ignoredGroups">
         <f:textbox/>
     </f:entry>
+    <f:entry title="${%Prevents webhook from CI commits}" field="skipCI">
+        <f:checkbox/>
+    </f:entry>
     <f:entry title="${%Ignore self-signed certificates}" field="ignoreCerts">
         <f:checkbox/>
     </f:entry>
     <f:entry title="${%Skip callback URL validation}" field="ignoreURLValidation">
-        <f:checkbox/>
-    </f:entry>
-    <f:entry title="${%Prevents webhook from CI commits}" field="skipCI">
         <f:checkbox/>
     </f:entry>
 </j:jelly>

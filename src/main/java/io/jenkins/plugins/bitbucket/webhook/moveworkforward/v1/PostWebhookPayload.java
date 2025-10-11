@@ -26,6 +26,7 @@ package io.jenkins.plugins.bitbucket.webhook.moveworkforward.v1;
 import com.cloudbees.jenkins.plugins.bitbucket.api.BitbucketWebHook;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.jenkins.plugins.bitbucket.webhook.moveworkforward.processor.PostWebhooksEventType;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -33,8 +34,7 @@ import java.util.Set;
 
 // See https://help.moveworkforward.com/BPW/how-to-manage-configurations-using-post-webhooks-f#HowtomanageconfigurationsusingPostWebhooksforBitbucketAPIs?-Version1
 public class PostWebhookPayload implements BitbucketWebHook {
-    @JsonProperty("id")
-    private Integer uid;
+    private Integer id;
     @JsonProperty("title")
     private String description;
     @JsonProperty("url")
@@ -110,74 +110,78 @@ public class PostWebhookPayload implements BitbucketWebHook {
         this.active = active;
     }
 
-    @Override
     @JsonIgnore
+    @Override
     public List<String> getEvents() {
-        Set<String> events = new HashSet<>();
+        return getEventTypes().stream().map(PostWebhooksEventType::name).toList();
+    }
+
+    @JsonIgnore
+    public List<PostWebhooksEventType> getEventTypes() {
+        Set<PostWebhooksEventType> events = new HashSet<>();
         if (prCommented) {
-            events.add("PULL_REQUEST_COMMENT");
+            events.add(PostWebhooksEventType.PULL_REQUEST_COMMENT);
         }
         if (prCreated) {
-            events.add("PULL_REQUEST_OPENED");
+            events.add(PostWebhooksEventType.PULL_REQUEST_OPENED);
         }
         if (prDeclined) {
-            events.add("PULL_REQUEST_DECLINED");
+            events.add(PostWebhooksEventType.PULL_REQUEST_DECLINED);
         }
         if (prDeleted) {
-            events.add("PULL_REQUEST_DELETED");
+            events.add(PostWebhooksEventType.PULL_REQUEST_DELETED);
         }
         if (prMerged) {
-            events.add("PULL_REQUEST_MERGED");
+            events.add(PostWebhooksEventType.PULL_REQUEST_MERGED);
         }
         if (prReopened) {
-            events.add("PULL_REQUEST_REOPENED");
+            events.add(PostWebhooksEventType.PULL_REQUEST_REOPENED);
         }
         if (prRescoped) {
-            events.add("PULL_REQUEST_RESCOPED");
+            events.add(PostWebhooksEventType.PULL_REQUEST_RESCOPED);
         }
         if (prUpdated) {
-            events.add("PULL_REQUEST_UPDATED");
+            events.add(PostWebhooksEventType.PULL_REQUEST_UPDATED);
         }
         if (repoMirrorSynced) {
-            events.add("REPOSITORY_MIRROR_SYNCHRONIZED");
+            events.add(PostWebhooksEventType.REPOSITORY_MIRROR_SYNCHRONIZED);
         }
         if (repoPush) {
-            events.add("ABSTRACT_REPOSITORY_REFS_CHANGED");
+            events.add(PostWebhooksEventType.ABSTRACT_REPOSITORY_REFS_CHANGED);
         }
         if (tagCreated) {
-            events.add("TAG_CREATED");
+            events.add(PostWebhooksEventType.TAG_CREATED);
         }
         if (branchCreated) {
-            events.add("BRANCH_CREATED");
+            events.add(PostWebhooksEventType.BRANCH_CREATED);
         }
         if (branchDeleted) {
-            events.add("BRANCH_DELETED");
+            events.add(PostWebhooksEventType.BRANCH_DELETED);
         }
         return new ArrayList<>(events);
     }
 
-    @JsonIgnore
-    public void setEvents(List<String> events) {
-        prCommented = events.contains("PULL_REQUEST_COMMENT");
-        prCreated = events.contains("PULL_REQUEST_OPENED");
-        prDeclined = events.contains("PULL_REQUEST_DECLINED");
-        prDeleted = events.contains("PULL_REQUEST_DELETED");
-        prMerged = events.contains("PULL_REQUEST_MERGED");
-        prReopened = events.contains("PULL_REQUEST_REOPENED");
-        prRescoped = events.contains("PULL_REQUEST_RESCOPED");
-        prUpdated = events.contains("PULL_REQUEST_UPDATED");
-        repoMirrorSynced = events.contains("REPOSITORY_MIRROR_SYNCHRONIZED");
-        repoPush = events.contains("ABSTRACT_REPOSITORY_REFS_CHANGED");
-        tagCreated = events.contains("TAG_CREATED");
-        branchCreated = events.contains("BRANCH_CREATED");
-        branchDeleted = events.contains("BRANCH_DELETED");
+    public void setEventTypes(List<PostWebhooksEventType> events) {
+        prCommented = events.contains(PostWebhooksEventType.PULL_REQUEST_COMMENT);
+        prCreated = events.contains(PostWebhooksEventType.PULL_REQUEST_OPENED);
+        prDeclined = events.contains(PostWebhooksEventType.PULL_REQUEST_DECLINED);
+        prDeleted = events.contains(PostWebhooksEventType.PULL_REQUEST_DELETED);
+        prMerged = events.contains(PostWebhooksEventType.PULL_REQUEST_MERGED);
+        prReopened = events.contains(PostWebhooksEventType.PULL_REQUEST_REOPENED);
+        prRescoped = events.contains(PostWebhooksEventType.PULL_REQUEST_RESCOPED);
+        prUpdated = events.contains(PostWebhooksEventType.PULL_REQUEST_UPDATED);
+        repoMirrorSynced = events.contains(PostWebhooksEventType.REPOSITORY_MIRROR_SYNCHRONIZED);
+        repoPush = events.contains(PostWebhooksEventType.ABSTRACT_REPOSITORY_REFS_CHANGED);
+        tagCreated = events.contains(PostWebhooksEventType.TAG_CREATED);
+        branchCreated = events.contains(PostWebhooksEventType.BRANCH_CREATED);
+        branchDeleted = events.contains(PostWebhooksEventType.BRANCH_DELETED);
     }
 
     @Override
     @JsonIgnore
     public String getUuid() {
-        if (uid != null) {
-            return String.valueOf(uid);
+        if (id != null) {
+            return String.valueOf(id);
         }
         return null;
     }
@@ -297,6 +301,14 @@ public class PostWebhookPayload implements BitbucketWebHook {
 
     public void setBuildStatus(boolean buildStatus) {
         this.buildStatus = buildStatus;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
 }

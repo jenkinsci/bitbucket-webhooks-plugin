@@ -26,10 +26,6 @@ package io.jenkins.plugins.bitbucket.webhook.moveworkforward.processor;
 import com.cloudbees.jenkins.plugins.bitbucket.BitbucketSCMNavigator;
 import com.cloudbees.jenkins.plugins.bitbucket.api.BitbucketHref;
 import com.cloudbees.jenkins.plugins.bitbucket.api.BitbucketRepository;
-import com.cloudbees.jenkins.plugins.bitbucket.client.events.BitbucketCloudPullRequestEvent;
-import com.cloudbees.jenkins.plugins.bitbucket.client.events.BitbucketCloudPushEvent;
-import com.cloudbees.jenkins.plugins.bitbucket.server.events.BitbucketServerPullRequestEvent;
-import com.cloudbees.jenkins.plugins.bitbucket.server.events.BitbucketServerPushEvent;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.scm.SCM;
 import java.net.URI;
@@ -78,15 +74,8 @@ abstract class AbstractSCMHeadEvent<P> extends SCMHeadEvent<P> {
 
     protected boolean isServerURLMatch(String serverURL) {
         if (serverURL == null) {
-            // this is a Bitbucket cloud navigator
-            if (getPayload() instanceof BitbucketServerPullRequestEvent || getPayload() instanceof BitbucketServerPushEvent) {
-                return false;
-            }
+            return false;
         } else {
-            // this is a Bitbucket server navigator
-            if (getPayload() instanceof BitbucketCloudPullRequestEvent || getPayload() instanceof BitbucketCloudPushEvent) {
-                return false;
-            }
             Map<String, List<BitbucketHref>> links = getRepository().getLinks();
             if (links != null && links.containsKey("self")) {
                 boolean matches = false;

@@ -1,0 +1,32 @@
+[
+    {
+        "id": 21,
+        "title": "Jenkins hook",
+        "url": "http://local-jenkins.com/bitbucket-scmsource-hook/notify",
+        "committersToIgnore": "jdoe",
+        "branchesToIgnore": "release/*",
+        "enabled": true,
+        "skipCI": true,
+        "tagCreated": true,
+        "branchDeleted": true,
+        "branchCreated": true,
+        "repoPush": true,
+        "prDeclined": true,
+        "prRescoped": false,
+        "prMerged": true,
+        "prReopened": true,
+        "prUpdated": true,
+        "prCreated": true,
+        "prCommented": false,
+        "prDeleted": true,
+        "buildStatus": false,
+        "repoMirrorSynced": true
+    },
+    {
+        "id": 642,
+        "title": "Other Site hook",
+        "url": "http://local-site.com/path/to/hook",
+        "skipCI": false,
+        "enabled": true
+    }
+]
