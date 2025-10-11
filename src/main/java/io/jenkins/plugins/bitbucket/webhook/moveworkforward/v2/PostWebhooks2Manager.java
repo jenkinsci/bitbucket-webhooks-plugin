@@ -36,6 +36,7 @@ import hudson.Util;
 import io.jenkins.plugins.bitbucket.webhook.JsonParser;
 import io.jenkins.plugins.bitbucket.webhook.moveworkforward.processor.PostWebhooksEventType;
 import io.jenkins.plugins.bitbucket.webhook.moveworkforward.v2.PostWebhook2Payload.Destination;
+import io.jenkins.plugins.bitbucket.webhook.moveworkforward.v2.PostWebhook2Payload.Source;
 import io.jenkins.plugins.bitbucket.webhook.moveworkforward.v2.trait.PostWebhooks2ConfigurationTrait;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,7 +50,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 import jenkins.scm.api.trait.SCMSourceTrait;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -76,6 +78,7 @@ public class PostWebhooks2Manager implements BitbucketWebhookManager {
 
     private PostWebhooks2Configuration configuration;
     private String callbackURL;
+    private String[] ignoredSources;
     private String[] ignoredUsers;
     private String[] ignoredGroups;
     private boolean ignoreCerts;
@@ -90,6 +93,7 @@ public class PostWebhooks2Manager implements BitbucketWebhookManager {
     @Override
     public void apply(SCMSourceTrait trait) {
         if (trait instanceof PostWebhooks2ConfigurationTrait cfgTrait) {
+            ignoredSources = StringUtils.split(Util.fixEmptyAndTrim(cfgTrait.getIgnoredSources()), ',');
             ignoredUsers = StringUtils.split(Util.fixEmptyAndTrim(cfgTrait.getIgnoredUsers()), ',');
             ignoredGroups = StringUtils.split(Util.fixEmptyAndTrim(cfgTrait.getIgnoredGroups()), ',');
             ignoreCerts = cfgTrait.isIgnoreCerts();
@@ -130,14 +134,27 @@ public class PostWebhooks2Manager implements BitbucketWebhookManager {
     }
 
     @NonNull
-    private PostWebhook2Payload buildPayload() {
+    private PostWebhook2Payload buildPayload(String owner, String repoSlug) {
         PostWebhook2Payload hook = new PostWebhook2Payload();
         hook.setActive(true);
         hook.setDescription("Jenkins hook");
         hook.setDestinations(new Destination[] { new Destination(callbackURL) });
         hook.setEventTypes(PLUGIN_SERVER_EVENTS);
-        hook.setIgnoredUsers(ignoredUsers);
-        hook.setIgnoredGroups(ignoredGroups);
+        hook.setProjectKey(owner);
+        hook.setRepositorySlug(repoSlug);
+        if (ArrayUtils.isNotEmpty(ignoredSources)) {
+            Source[] sources = Stream.of(ignoredSources)
+                    .filter(StringUtils::isNotEmpty)
+                    .map(source -> new Source(owner, repoSlug, source))
+                    .toArray(Source[]::new);
+            hook.setIgnoredSources(sources);
+        }
+        if (ArrayUtils.isNotEmpty(ignoredUsers)) {
+            hook.setIgnoredUsers(ignoredUsers);
+        }
+        if (ArrayUtils.isNotEmpty(ignoredGroups)) {
+            hook.setIgnoredGroups(ignoredGroups);
+        }
         hook.setIgnoreCerts(ignoreCerts);
         hook.setIgnoreURLValidation(ignoreURLValidation);
         hook.setSkipCI(skipCI);
@@ -160,6 +177,11 @@ public class PostWebhooks2Manager implements BitbucketWebhookManager {
         if (!Arrays.deepEquals(current.getIgnoredGroups(), expected.getIgnoredGroups())) {
             current.setIgnoredGroups(expected.getIgnoredGroups());
             logger.info(() -> "Update ignoredGroups");
+            update = true;
+        }
+        if (!Arrays.deepEquals(current.getIgnoredSources(), expected.getIgnoredSources())) {
+            current.setIgnoredSources(expected.getIgnoredSources());
+            logger.info(() -> "Update ignoredSources");
             update = true;
         }
         if (current.isIgnoreCerts() != expected.isIgnoreCerts()) {
@@ -225,10 +247,11 @@ public class PostWebhooks2Manager implements BitbucketWebhookManager {
                 .findFirst()
                 .orElse(null);
 
+        PostWebhook2Payload payload = buildPayload(client.getRepositoryOwner(), client.getRepositoryName());
         if (existingHook == null) {
             logger.log(Level.INFO, "Registering cloud hook for {0}/{1}", new Object[] { client.getRepositoryOwner(), client.getRepositoryName() });
-            register(buildPayload(), client);
-        } else if (shouldUpdate(existingHook, buildPayload())) {
+            register(payload, client);
+        } else if (shouldUpdate(existingHook, payload)) {
             logger.log(Level.INFO, "Updating cloud hook for {0}/{1}", new Object[] { client.getRepositoryOwner(), client.getRepositoryName() });
             update(existingHook, client);
         }

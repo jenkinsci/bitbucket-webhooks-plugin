@@ -48,7 +48,7 @@
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
                 <artifactId>bom-${jenkins.baseline}.x</artifactId>
-                <version>5506.va_222b_131ec34</version>
+                <version>5543.vfd758c7c868d</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -56,7 +56,7 @@
                 <!-- remove when this version is included in the BOM -->
                 <groupId>org.jenkins-ci.plugins</groupId>
                 <artifactId>cloudbees-bitbucket-branch-source</artifactId>
-                <version>937.1.0</version>
+                <version>937.2.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
