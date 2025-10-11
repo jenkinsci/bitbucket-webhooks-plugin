@@ -25,7 +25,6 @@
     </licenses>
 
     <properties>
-        <useBeta>true</useBeta>
         <revision>1.0.1</revision>
         <changelist>-SNAPSHOT</changelist>
         <gitHubRepo>jenkinsci/bitbucket-webhooks-plugin</gitHubRepo>
