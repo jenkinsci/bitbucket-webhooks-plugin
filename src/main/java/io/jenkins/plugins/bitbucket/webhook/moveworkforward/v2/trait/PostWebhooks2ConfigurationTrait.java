@@ -27,7 +27,7 @@ import com.cloudbees.jenkins.plugins.bitbucket.BitbucketGitSCMBuilder;
 import com.cloudbees.jenkins.plugins.bitbucket.BitbucketSCMSource;
 import com.cloudbees.jenkins.plugins.bitbucket.BitbucketSCMSourceContext;
 import com.cloudbees.jenkins.plugins.bitbucket.api.webhook.BitbucketWebhookManager;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import hudson.Extension;
 import hudson.Util;
 import hudson.plugins.git.GitSCM;
@@ -48,6 +48,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
  */
 public class PostWebhooks2ConfigurationTrait extends SCMSourceTrait {
 
+    private String ignoredSources;
     private String ignoredUsers;
     private String ignoredGroups;
     private boolean ignoreCerts;
@@ -67,11 +68,13 @@ public class PostWebhooks2ConfigurationTrait extends SCMSourceTrait {
      * @param skipCI commits that contains specific messages
      */
     @DataBoundConstructor
-    public PostWebhooks2ConfigurationTrait(@NonNull String ignoredUsers,
-                                           @NonNull String ignoredGroups,
+    public PostWebhooks2ConfigurationTrait(@CheckForNull String ignoredSources,
+                                           @CheckForNull String ignoredUsers,
+                                           @CheckForNull String ignoredGroups,
                                            boolean ignoreCerts,
                                            boolean ignoreURLValidation,
                                            boolean skipCI) {
+        this.ignoredSources = Util.fixEmptyAndTrim(ignoredSources);
         this.ignoredUsers = Util.fixEmptyAndTrim(ignoredUsers);
         this.ignoredGroups = Util.fixEmptyAndTrim(ignoredGroups);
         this.ignoreCerts = ignoreCerts;
@@ -97,6 +100,14 @@ public class PostWebhooks2ConfigurationTrait extends SCMSourceTrait {
 
     public boolean isSkipCI() {
         return this.skipCI;
+    }
+
+    public String getIgnoredSources() {
+        return ignoredSources;
+    }
+
+    public void setIgnoredSources(String ignoredSources) {
+        this.ignoredSources = ignoredSources;
     }
 
     /**

@@ -24,7 +24,10 @@
 package io.jenkins.plugins.bitbucket.webhook.moveworkforward.v2;
 
 import com.cloudbees.jenkins.plugins.bitbucket.api.BitbucketWebHook;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.jenkins.plugins.bitbucket.webhook.moveworkforward.processor.PostWebhooksEventType;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.apache.commons.collections4.CollectionUtils;
@@ -35,6 +38,19 @@ public class PostWebhook2Payload implements BitbucketWebHook {
         private String projectKey;
         private String repositorySlug;
         private String branchName;
+
+        public Source() {
+        }
+
+        public Source(String projectKey, String repositorySlug) {
+            this(projectKey, repositorySlug, null);
+        }
+
+        public Source(String projectKey, String repositorySlug, String branchName) {
+            this.projectKey = projectKey;
+            this.repositorySlug = repositorySlug;
+            this.branchName = branchName;
+        }
 
         public String getProjectKey() {
             return projectKey;
@@ -142,19 +158,23 @@ public class PostWebhook2Payload implements BitbucketWebHook {
     private Destination[] destinations;
     private Source[] sources;
     private Source[] ignoredSources;
-    private String[] users;
-    private String[] ignoredUsers;
-    private String[] groups;
-    private String[] ignoredGroups;
-    @JsonProperty("eventTypes")
-    private List<String> events;
+    private String[] users = new String[0];
+    private String[] ignoredUsers = new String[0];
+    private String[] groups = new String[0];
+    private String[] ignoredGroups = new String[0];
+    private List<PostWebhooksEventType> eventTypes;
     private boolean ignoreCerts;
     private boolean ignoreURLValidation;
+    private boolean enableAuthentication = false;
+    private boolean mutualAuthenticationEnabled = false;
+    private String payloadType = "Jenkins";
     private boolean skipCI;
     private String httpMethod = "POST";
     private String repositoryPattern;
-    private String[] filePathPatterns;
+    private String[] filePathPatterns = new String[0];
+    private String level = "REPOSITORY";
 
+    @JsonIgnore
     @Override
     public String getUuid() {
         return String.valueOf(id);
@@ -241,13 +261,18 @@ public class PostWebhook2Payload implements BitbucketWebHook {
         this.ignoredGroups = ignoredGroups;
     }
 
+    @JsonIgnore
     @Override
     public List<String> getEvents() {
-        return events;
+        return eventTypes == null ? new ArrayList<String>() : eventTypes.stream().map(PostWebhooksEventType::toString).toList();
     }
 
-    public void setEvents(List<String> events) {
-        this.events = events;
+    public List<PostWebhooksEventType> getEventTypes() {
+        return this.eventTypes;
+    }
+
+    public void setEventTypes(List<PostWebhooksEventType> events) {
+        this.eventTypes = events;
     }
 
     public boolean isIgnoreCerts() {
@@ -303,6 +328,7 @@ public class PostWebhook2Payload implements BitbucketWebHook {
         this.description = description;
     }
 
+    @JsonIgnore
     @Override
     public String getUrl() {
         return CollectionUtils.sizeIsEmpty(destinations) ? null : destinations[0].getUrl();
@@ -314,5 +340,21 @@ public class PostWebhook2Payload implements BitbucketWebHook {
 
     public void setSources(Source[] sources) {
         this.sources = sources;
+    }
+
+    public String getPayloadType() {
+        return payloadType;
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    public boolean isEnableAuthentication() {
+        return enableAuthentication;
+    }
+
+    public boolean isMutualAuthenticationEnabled() {
+        return mutualAuthenticationEnabled;
     }
 }

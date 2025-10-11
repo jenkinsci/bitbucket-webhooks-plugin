@@ -31,7 +31,6 @@ import com.cloudbees.jenkins.plugins.bitbucket.api.BitbucketPullRequest;
 import com.cloudbees.jenkins.plugins.bitbucket.api.BitbucketPullRequestEvent;
 import com.cloudbees.jenkins.plugins.bitbucket.api.BitbucketRepository;
 import com.cloudbees.jenkins.plugins.bitbucket.hooks.HasPullRequests;
-import com.cloudbees.jenkins.plugins.bitbucket.hooks.HookEventType;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Collections;
@@ -47,15 +46,13 @@ import jenkins.scm.api.SCMRevision;
 import jenkins.scm.api.SCMSource;
 import jenkins.scm.api.mixin.ChangeRequestCheckoutStrategy;
 
-import static com.cloudbees.jenkins.plugins.bitbucket.hooks.HookEventType.PULL_REQUEST_DECLINED;
-import static com.cloudbees.jenkins.plugins.bitbucket.hooks.HookEventType.PULL_REQUEST_MERGED;
-
 final class PostWebhooksPREvent extends AbstractSCMHeadEvent<BitbucketPullRequestEvent> implements HasPullRequests {
-    private final HookEventType hookEvent;
+    private final PostWebhooksEventType hookEvent;
 
-    PostWebhooksPREvent(Type type, BitbucketPullRequestEvent payload,
-                 String origin,
-                 HookEventType hookEvent) {
+    PostWebhooksPREvent(Type type,
+                        BitbucketPullRequestEvent payload,
+                        String origin,
+                        PostWebhooksEventType hookEvent) {
         super(type, payload, origin);
         this.hookEvent = hookEvent;
     }
@@ -120,7 +117,7 @@ final class PostWebhooksPREvent extends AbstractSCMHeadEvent<BitbucketPullReques
                 headOrigin,
                 strategy
             );
-            if (hookEvent == PULL_REQUEST_DECLINED || hookEvent == PULL_REQUEST_MERGED) {
+            if (hookEvent == PostWebhooksEventType.PULL_REQUEST_DECLINED || hookEvent == PostWebhooksEventType.PULL_REQUEST_MERGED) {
                 // special case for repo being deleted
                 result.put(head, null);
             } else {
@@ -139,7 +136,7 @@ final class PostWebhooksPREvent extends AbstractSCMHeadEvent<BitbucketPullReques
 
     @Override
     public Iterable<BitbucketPullRequest> getPullRequests(BitbucketSCMSource src) throws InterruptedException {
-        if (hookEvent == PULL_REQUEST_DECLINED || hookEvent == PULL_REQUEST_MERGED) {
+        if (hookEvent == PostWebhooksEventType. PULL_REQUEST_DECLINED || hookEvent == PostWebhooksEventType.PULL_REQUEST_MERGED) {
             return Collections.emptyList();
         }
         return Collections.singleton(getPayload().getPullRequest());

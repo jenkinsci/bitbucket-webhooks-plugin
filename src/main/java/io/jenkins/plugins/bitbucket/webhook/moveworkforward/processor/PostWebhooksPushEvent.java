@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2016, CloudBees, Inc.
+ * Copyright (c) 2025, Nikolas Falco
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,7 +39,7 @@ import jenkins.plugins.git.AbstractGitSCMSource;
 import jenkins.scm.api.SCMHead;
 import jenkins.scm.api.SCMRevision;
 import jenkins.scm.api.SCMSource;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 final class PostWebhooksPushEvent extends AbstractSCMHeadEvent<BitbucketPushEvent> {
 
@@ -63,7 +63,7 @@ final class PostWebhooksPushEvent extends AbstractSCMHeadEvent<BitbucketPushEven
         if (!isServerURLMatch(src.getServerUrl())) {
             return Collections.emptyMap();
         }
-        if (!StringUtils.equalsIgnoreCase(src.getRepoOwner(), getPayload().getRepository().getOwnerName())) {
+        if (!Strings.CI.equals(src.getRepoOwner(), getPayload().getRepository().getOwnerName())) {
             return Collections.emptyMap();
         }
         if (!src.getRepository().equalsIgnoreCase(getPayload().getRepository().getRepositoryName())) {

@@ -34,12 +34,11 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.Util;
 import io.jenkins.plugins.bitbucket.webhook.JsonParser;
+import io.jenkins.plugins.bitbucket.webhook.moveworkforward.processor.PostWebhooksEventType;
 import io.jenkins.plugins.bitbucket.webhook.moveworkforward.v1.trait.PostWebhooksConfigurationTrait;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -58,18 +57,18 @@ public class PostWebhooksManager implements BitbucketWebhookManager {
     private static final Logger logger = Logger.getLogger(PostWebhooksManager.class.getName());
 
     // See https://help.moveworkforward.com/BPW/how-to-manage-configurations-using-post-webhooks-f#HowtomanageconfigurationsusingPostWebhooksforBitbucketAPIs?-Possibleeventtypes
-    private static final List<String> PLUGIN_SERVER_EVENTS = Collections.unmodifiableList(Arrays.asList(
-            "ABSTRACT_REPOSITORY_REFS_CHANGED", // push event
-            "BRANCH_CREATED",
-            "BRANCH_DELETED",
-            "PULL_REQUEST_DECLINED",
-            "PULL_REQUEST_DELETED",
-            "PULL_REQUEST_MERGED",
-            "PULL_REQUEST_OPENED",
-            "PULL_REQUEST_REOPENED",
-            "PULL_REQUEST_UPDATED",
-            "REPOSITORY_MIRROR_SYNCHRONIZED", // not supported by the hookprocessor
-            "TAG_CREATED"));
+    private static final List<PostWebhooksEventType> PLUGIN_SERVER_EVENTS = List.of(
+            PostWebhooksEventType.ABSTRACT_REPOSITORY_REFS_CHANGED, // push event
+            PostWebhooksEventType.BRANCH_CREATED,
+            PostWebhooksEventType.BRANCH_DELETED,
+            PostWebhooksEventType.PULL_REQUEST_DECLINED,
+            PostWebhooksEventType.PULL_REQUEST_DELETED,
+            PostWebhooksEventType.PULL_REQUEST_MERGED,
+            PostWebhooksEventType.PULL_REQUEST_OPENED,
+            PostWebhooksEventType.PULL_REQUEST_REOPENED,
+            PostWebhooksEventType.PULL_REQUEST_UPDATED,
+            PostWebhooksEventType.REPOSITORY_MIRROR_SYNCHRONIZED, // not supported by the hookprocessor
+            PostWebhooksEventType.TAG_CREATED);
 
     private PostWebhooksConfiguration configuration;
     private String callbackURL;
@@ -108,7 +107,7 @@ public class PostWebhooksManager implements BitbucketWebhookManager {
     @Override
     @NonNull
     public Collection<BitbucketWebHook> read(@NonNull BitbucketAuthenticatedClient client) throws IOException {
-        String endpointJenkinsRootURL = ObjectUtils.firstNonNull(configuration.getEndpointJenkinsRootURL(), BitbucketWebhookConfiguration.getDefaultJenkinsRootURL());
+        String endpointJenkinsRootURL = ObjectUtils.getFirstNonNull(() -> configuration.getEndpointJenkinsRootURL(), () -> BitbucketWebhookConfiguration.getDefaultJenkinsRootURL());
 
         String url = UriTemplate.fromTemplate(WEBHOOK_API)
                 .set("owner", client.getRepositoryOwner())
@@ -128,7 +127,7 @@ public class PostWebhooksManager implements BitbucketWebhookManager {
         hook.setActive(true);
         hook.setDescription("Jenkins hook");
         hook.setUrl(callbackURL);
-        hook.setEvents(PLUGIN_SERVER_EVENTS);
+        hook.setEventTypes(PLUGIN_SERVER_EVENTS);
         hook.setCommittersToIgnore(committersToIgnore);
         hook.setBranchesToIgnore(branchesToIgnore);
         hook.setSkipCI(skipCI);
@@ -173,12 +172,12 @@ public class PostWebhooksManager implements BitbucketWebhookManager {
             update = true;
         }
 
-        List<String> events = current.getEvents();
-        List<String> expectedEvents = expected.getEvents();
+        List<PostWebhooksEventType> events = current.getEventTypes();
+        List<PostWebhooksEventType> expectedEvents = expected.getEventTypes();
         if (!events.containsAll(expectedEvents)) {
-            Set<String> newEvents = new TreeSet<>(events);
+            Set<PostWebhooksEventType> newEvents = new TreeSet<>(events);
             newEvents.addAll(expectedEvents);
-            current.setEvents(new ArrayList<>(newEvents));
+            current.setEventTypes(new ArrayList<>(newEvents));
             logger.info(() -> "Update webhook " + current.getUuid() + " events because was missing: " + CollectionUtils.subtract(expectedEvents, events));
             update = true;
         }

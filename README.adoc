@@ -19,3 +19,35 @@ image::docs/images/screenshot-1.png[]
 == Development of this plugin
 
 See the https://www.jenkins.io/doc/developer/tutorial[Jenkins Plugin Tutorial] for information on development environment setup and testing of plugins.
+
+== Supported plugin
+
+Supported plugins available from Atlassian marketplace:
+
+* <<#jenkins-and-azure-devops-post-webhooks-for-bitbucket,Jenkins and Azure DevOps Post Webhooks for Bitbucket>>
+* <<#webhook-to-jenkins-for-bitbucket,Webhook to Jenkins for Bitbucket by Appfire>>
+
+=== Jenkins and Azure DevOps Post Webhooks for Bitbucket
+
+This plugin is developed by the company https://www.moveworkforward.com/product/post-webhooks-for-bitbucket[moveforward] and provides additional functionality to prevent webhooks from being forwarded if certain configurable conditions are met.
+It has been available on the marketplace since the beginning, before the native implementation for Bitbucket Server was available.
+There are two versions of the REST API endpoint; this plugin implements both, but version 2 is in beta.
+When configuring a new Bitbucket Server endpoint in the _Manage Jenkins_ -> _System_ menu, you must select which webhook implementations to use:
+
+image::docs/images/screenshot-1.png[]
+
+When setting up a Jenkins _Multibranch_ or _Organization_ project, there is a specific feature available to configure extra functionality:
+
+Configuration available in version 1.0:
+
+image::docs/images/screenshot-2.png[]
+
+Configuration available in version 2.0:
+
+image::docs/images/screenshot-3.png[]
+
+=== Webhook to Jenkins for Bitbucket
+
+This plugin is developed by the company https://appfire.atlassian.net/wiki/spaces/JENK/overview[appfire].
+
+_Help wanted to integrate all the functionalities of this bitbucket plugin._
