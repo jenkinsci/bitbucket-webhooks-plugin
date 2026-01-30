@@ -67,6 +67,7 @@ public class PostWebhooksManager implements BitbucketWebhookManager {
             PostWebhooksEventType.PULL_REQUEST_OPENED,
             PostWebhooksEventType.PULL_REQUEST_REOPENED,
             PostWebhooksEventType.PULL_REQUEST_UPDATED,
+            PostWebhooksEventType.PULL_REQUEST_RESCOPED,
             PostWebhooksEventType.REPOSITORY_MIRROR_SYNCHRONIZED, // not supported by the hookprocessor
             PostWebhooksEventType.TAG_CREATED);
 
