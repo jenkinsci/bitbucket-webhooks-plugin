@@ -36,7 +36,7 @@ public enum PostWebhooksEventType {
     PULL_REQUEST_DECLINED("pullrequest:rejected"),
     PULL_REQUEST_MERGED("pullrequest:fulfilled"),
     PULL_REQUEST_UPDATED("pullrequest:updated"),
-    PULL_REQUEST_RESCOPED(null/*"pullrequest:updated"*/),
+    PULL_REQUEST_RESCOPED("pullrequest:rescoped"),
     PULL_REQUEST_REOPENED(null/*"pullrequest:updated"*/),
     PULL_REQUEST_OPENED("pullrequest:created"),
     PULL_REQUEST_COMMENT("pullrequest:comment"),
