@@ -46,6 +46,8 @@ public class PostWebhooksProcessor extends AbstractPostWebhookProcessor {
 
     @Override
     public void process(@NonNull String eventType, @NonNull String payload, @NonNull Map<String, Object> context, @NonNull BitbucketEndpoint endpoint) {
+        logger.finer(() -> "Incoming webhook payload: " + payload);
+
         BitbucketPushEvent push = WebhookPayload.pushEventFromPayload(payload);
         if (push != null) {
             if (push.getChanges().isEmpty()) {

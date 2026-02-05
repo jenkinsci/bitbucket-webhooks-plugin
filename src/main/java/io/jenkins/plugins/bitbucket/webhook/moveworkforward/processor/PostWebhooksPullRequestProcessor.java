@@ -30,10 +30,12 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import jenkins.scm.api.SCMEvent;
 
 @Extension
 public class PostWebhooksPullRequestProcessor extends AbstractPostWebhookProcessor {
+    private static final Logger logger = Logger.getLogger(PostWebhooksPullRequestProcessor.class.getName());
 
     @Override
     protected List<PostWebhooksEventType> getSupportedEvents() {
@@ -47,6 +49,8 @@ public class PostWebhooksPullRequestProcessor extends AbstractPostWebhookProcess
 
     @Override
     public void process(@NonNull String hookEventType, @NonNull String payload, @NonNull Map<String, Object> context, @NonNull BitbucketEndpoint endpoint) {
+        logger.finer(() -> "Incoming webhook payload: " + payload);
+
         PostWebhooksEventType hookEvent = PostWebhooksEventType.fromHeader(hookEventType);
         BitbucketPullRequestEvent pull = WebhookPayload.pullRequestEventFromPayload(payload);
         if (pull != null && hookEvent != null) {
