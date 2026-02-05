@@ -1,7 +1,7 @@
 = Bitbucket Webhooks Plugin
 
-image:https://ci.jenkins.io/job/Plugins/job/bitbucket-webhooks-plugin/job/master/badge/icon[Build Status,link=https://ci.jenkins.io/job/Plugins/job/bitbucket-webhooks-plugin/job/master]
-image:https://img.shields.io/jenkins/plugin/i/bitbucket-webhooks-plugin?color=blue&label=installations[Installations,link=https://stats.jenkins.io/pluginversions/badge.html]
+image:https://ci.jenkins.io/job/Plugins/job/bitbucket-webhooks-plugin/job/master/badge/icon/[Build Status,link=https://ci.jenkins.io/job/Plugins/job/bitbucket-webhooks-plugin/job/master]
+image:https://img.shields.io/jenkins/plugin/i/bitbucket-webhooks-plugin?color=blue[Installations, link=https://plugins.jenkins.io/bitbucket-webhooks/]
 image:https://img.shields.io/github/contributors/jenkinsci/bitbucket-webhooks-plugin.svg?color=blue[Contributors,link=https://github.com/jenkinsci/bitbucket-webhooks-plugin/contributors]
 image:https://img.shields.io/github/release/jenkinsci/bitbucket-webhooks-plugin.svg?label=release[GitHub release,link=https://github.com/jenkinsci/bitbucket-webhooks-plugin/releases/latest]
 
