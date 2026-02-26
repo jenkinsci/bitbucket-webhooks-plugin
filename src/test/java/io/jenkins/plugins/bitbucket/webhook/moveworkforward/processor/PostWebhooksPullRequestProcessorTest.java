@@ -135,6 +135,16 @@ class PostWebhooksPullRequestProcessorTest {
     }
 
     @Test
+    void test_pullrequest_rescoped() throws Exception {
+        sut.process(HookEventType.PULL_REQUEST_UPDATED.getKey(), loadResource("pullrequest_rescoped.json"), Collections.emptyMap(), mock(BitbucketEndpoint.class));
+
+        assertThat(scmEvent).isNotNull().isInstanceOf(PostWebhooksPREvent.class);
+
+        assertThat(scmEvent.getSourceName()).isEqualTo("rep_1");
+        assertThat(scmEvent.getType()).isEqualTo(Type.UPDATED);
+    }
+
+    @Test
     void test_PREvent_match_SCMNavigator() throws Exception {
         sut.process(HookEventType.PULL_REQUEST_CREATED.getKey(), loadResource("pullrequest_created.json"), Collections.emptyMap(), mock(BitbucketEndpoint.class));
 
