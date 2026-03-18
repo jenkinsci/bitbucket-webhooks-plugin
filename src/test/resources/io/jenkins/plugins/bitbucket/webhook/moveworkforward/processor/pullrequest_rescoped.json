@@ -1,0 +1,106 @@
+{
+    "actor": {
+        "username": "admin",
+        "displayName": "Administrator",
+        "emailAddress": "admin@example.com"
+    },
+    "pullrequest": {
+        "id": "9",
+        "title": "dummy-commit 1",
+        "link": "http://localhost:7990/bitbucket/projects/PROJECT_1/repos/rep_1/pull-requests/1",
+        "authorLogin": "Administrator",
+        "fromRef": {
+            "repository": {
+                "scmId": "git",
+                "project": {
+                    "key": "PROJECT_1",
+                    "name": "Project 1"
+                },
+                "slug": "rep_1",
+                "links": {
+                    "self": [
+                        {
+                            "href": "http://localhost:7990/bitbucket/projects/PROJECT_1/repos/rep_1/browse"
+                        }
+                    ]
+                },
+                "ownerName": "PROJECT_1",
+                "public": false,
+                "owner": {
+                    "username": "PROJECT_1",
+                    "displayName": "PROJECT_1",
+                    "emailAddress": null
+                },
+                "fullName": "PROJECT_1/rep_1"
+            },
+            "branch": {
+                "name": "feature/pr_check",
+                "rawNode": "b1e9d3f5ea5531bc43946426008b1ca624fb15c6"
+            },
+            "commit": {
+                "message": null,
+                "date": "05.02.26, 20:05",
+                "hash": "b1e9d3f5ea5531bc43946426008b1ca624fb15c6",
+                "authorTimestamp": 1770318322224
+            }
+        },
+        "toRef": {
+            "repository": {
+                "scmId": "git",
+                "project": {
+                    "key": "PROJECT_1",
+                    "name": "Project 1"
+                },
+                "slug": "rep_1",
+                "links": {
+                    "self": [
+                        {
+                            "href": "http://localhost:7990/bitbucket/projects/PROJECT_1/repos/rep_1/browse"
+                        }
+                    ]
+                },
+                "ownerName": "PROJECT_1",
+                "public": false,
+                "owner": {
+                    "username": "PROJECT_1",
+                    "displayName": "PROJECT_1",
+                    "emailAddress": null
+                },
+                "fullName": "PROJECT_1/rep_1"
+            },
+            "branch": {
+                "name": "master",
+                "rawNode": "e8c5aaf74e827c35333f541ef83e9c6ce7dc7d74"
+            },
+            "commit": {
+                "message": null,
+                "date": "05.02.26, 20:05",
+                "hash": "e8c5aaf74e827c35333f541ef83e9c6ce7dc7d74",
+                "authorTimestamp": 1770318322225
+            }
+        }
+    },
+    "repository": {
+        "scmId": "git",
+        "project": {
+            "key": "PROJECT_1",
+            "name": "Project 1"
+        },
+        "slug": "rep_1",
+        "links": {
+            "self": [
+                {
+                    "href": "http://localhost:7990/bitbucket/projects/PROJECT_1/repos/rep_1/browse"
+                }
+            ]
+        },
+        "ownerName": "PROJECT_1",
+        "public": false,
+        "owner": {
+            "username": "PROJECT_1",
+            "displayName": "PROJECT_1",
+            "emailAddress": null
+        },
+        "fullName": "PROJECT_1/rep_1"
+    }
+}
