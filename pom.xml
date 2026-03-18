@@ -11,7 +11,7 @@
 
     <groupId>io.jenkins.plugins</groupId>
     <artifactId>bitbucket-webhooks</artifactId>
-    <version>1.0.1</version>
+    <version>${revision}${changelist}</version>
     <packaging>hpi</packaging>
 
     <name>Bitbucket Webhooks Integration</name>
@@ -25,7 +25,7 @@
     </licenses>
 
     <properties>
-        <revision>1.0.1</revision>
+        <revision>1.0.2</revision>
         <changelist>-SNAPSHOT</changelist>
         <gitHubRepo>jenkinsci/bitbucket-webhooks-plugin</gitHubRepo>
         <jenkins.baseline>2.504</jenkins.baseline>
