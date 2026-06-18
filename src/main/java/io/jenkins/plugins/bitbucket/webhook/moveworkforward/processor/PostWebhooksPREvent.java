@@ -27,10 +27,12 @@ import com.cloudbees.jenkins.plugins.bitbucket.BitbucketSCMSource;
 import com.cloudbees.jenkins.plugins.bitbucket.BitbucketSCMSourceContext;
 import com.cloudbees.jenkins.plugins.bitbucket.PullRequestSCMHead;
 import com.cloudbees.jenkins.plugins.bitbucket.PullRequestSCMRevision;
+import com.cloudbees.jenkins.plugins.bitbucket.api.BitbucketBranch;
 import com.cloudbees.jenkins.plugins.bitbucket.api.BitbucketPullRequest;
 import com.cloudbees.jenkins.plugins.bitbucket.api.BitbucketPullRequestEvent;
 import com.cloudbees.jenkins.plugins.bitbucket.api.BitbucketRepository;
 import com.cloudbees.jenkins.plugins.bitbucket.api.HasPullRequests;
+import com.cloudbees.jenkins.plugins.bitbucket.api.HasTags;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Collections;
@@ -46,7 +48,7 @@ import jenkins.scm.api.SCMRevision;
 import jenkins.scm.api.SCMSource;
 import jenkins.scm.api.mixin.ChangeRequestCheckoutStrategy;
 
-final class PostWebhooksPREvent extends AbstractSCMHeadEvent<BitbucketPullRequestEvent> implements HasPullRequests {
+final class PostWebhooksPREvent extends AbstractSCMHeadEvent<BitbucketPullRequestEvent> implements HasPullRequests, HasTags {
     private final PostWebhooksEventType hookEvent;
 
     PostWebhooksPREvent(Type type,
@@ -140,5 +142,10 @@ final class PostWebhooksPREvent extends AbstractSCMHeadEvent<BitbucketPullReques
             return Collections.emptyList();
         }
         return Collections.singleton(getPayload().getPullRequest());
+    }
+
+    @Override
+    public Iterable<BitbucketBranch> getTags(BitbucketSCMSource src) {
+        return Collections.emptySet();
     }
 }

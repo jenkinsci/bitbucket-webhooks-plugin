@@ -26,14 +26,21 @@ package io.jenkins.plugins.bitbucket.webhook.moveworkforward.processor;
 import com.cloudbees.jenkins.plugins.bitbucket.BitbucketSCMSource;
 import com.cloudbees.jenkins.plugins.bitbucket.BitbucketTagSCMHead;
 import com.cloudbees.jenkins.plugins.bitbucket.BranchSCMHead;
+import com.cloudbees.jenkins.plugins.bitbucket.api.BitbucketBranch;
+import com.cloudbees.jenkins.plugins.bitbucket.api.BitbucketPullRequest;
 import com.cloudbees.jenkins.plugins.bitbucket.api.BitbucketPushEvent;
 import com.cloudbees.jenkins.plugins.bitbucket.api.BitbucketPushEvent.Reference;
 import com.cloudbees.jenkins.plugins.bitbucket.api.BitbucketPushEvent.Target;
 import com.cloudbees.jenkins.plugins.bitbucket.api.BitbucketRepository;
+import com.cloudbees.jenkins.plugins.bitbucket.api.HasPullRequests;
+import com.cloudbees.jenkins.plugins.bitbucket.api.HasTags;
+import com.cloudbees.jenkins.plugins.bitbucket.server.client.branch.BitbucketServerBranch;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import jenkins.plugins.git.AbstractGitSCMSource;
 import jenkins.scm.api.SCMHead;
@@ -41,7 +48,7 @@ import jenkins.scm.api.SCMRevision;
 import jenkins.scm.api.SCMSource;
 import org.apache.commons.lang3.Strings;
 
-final class PostWebhooksPushEvent extends AbstractSCMHeadEvent<BitbucketPushEvent> {
+final class PostWebhooksPushEvent extends AbstractSCMHeadEvent<BitbucketPushEvent> implements HasPullRequests, HasTags {
 
     PostWebhooksPushEvent(Type type, BitbucketPushEvent payload, String origin) {
         super(type, payload, origin);
@@ -101,5 +108,45 @@ final class PostWebhooksPushEvent extends AbstractSCMHeadEvent<BitbucketPushEven
     @Override
     protected BitbucketRepository getRepository() {
         return getPayload().getRepository();
+    }
+
+    @Override
+    public Iterable<BitbucketPullRequest> getPullRequests(BitbucketSCMSource src) throws InterruptedException {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public Iterable<BitbucketBranch> getTags(BitbucketSCMSource src) {
+        if (!isServerURLMatch(src.getServerUrl())) {
+            return Collections.emptyList();
+        }
+        if (!Strings.CI.equals(src.getRepoOwner(), getPayload().getRepository().getOwnerName())) {
+            return Collections.emptyList();
+        }
+        if (!src.getRepository().equalsIgnoreCase(getPayload().getRepository().getRepositoryName())) {
+            return Collections.emptyList();
+        }
+
+        List<BitbucketBranch> tags = new ArrayList<>();
+        for (BitbucketPushEvent.Change change: getPayload().getChanges()) {
+            if (!change.isClosed()) {
+                // created is true
+                Reference newChange = change.getNew();
+                Target target = newChange.getTarget();
+
+                String eventType = newChange.getType();
+                if ("tag".equals(eventType)) {
+                    Date tagDate = newChange.getDate() != null ? newChange.getDate() : target.getDate();
+                    if (tagDate == null) {
+                        // fall back to the jenkins time when the request is processed
+                        tagDate = new Date();
+                    }
+                    BitbucketServerBranch tagHead = new BitbucketServerBranch(newChange.getName(), target.getHash());
+                    tagHead.setTimestamp(tagDate.getTime());
+                    tags.add(tagHead);
+                }
+            }
+        }
+        return tags;
     }
 }
